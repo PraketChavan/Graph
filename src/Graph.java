@@ -1,5 +1,7 @@
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
 
 /**
  * Graph represented as a adjacency list. By default the graph will be undirected
@@ -75,7 +77,7 @@ public class Graph<T> extends LinkedList<Vertex<T>> {
      * @throws Exception throws exception if the ids are equal, or if either of the vertices do not exist
      */
     public void addEdge(int fromId, int toId, double weight) throws Exception {
-        Vertex<T> v =  null, u = null;
+        Vertex<T> v, u;
         if (fromId == toId) {
             throw new Exception("Cannot add edge to itself");
         }
@@ -87,6 +89,7 @@ public class Graph<T> extends LinkedList<Vertex<T>> {
         v.addEdge(u, weight);
     }
 
+
     /**
      * Removes all the edges between two vertices
      * @param fromId id of the first vertex
@@ -94,7 +97,7 @@ public class Graph<T> extends LinkedList<Vertex<T>> {
      * @throws Exception when the given vertex/vertices does not exist
      */
     public void removeEdge(int fromId, int toId) throws Exception {
-        Vertex<T> v =  null, u = null;
+        Vertex<T> v, u;
 
         v = findVertex(fromId);
         u = findVertex(toId);
@@ -121,10 +124,102 @@ public class Graph<T> extends LinkedList<Vertex<T>> {
     public void printGraph() {
         for (Vertex<T> v : this) {
             System.out.print(v.id + ":");
-            for (Edges e: v.edges) {
+            for (Edges<T> e: v.edges) {
                 System.out.printf(" %d[%.2f]", e.destination.id, e.weight);
             }
             System.out.println();
+        }
+    }
+
+    /**
+     * Returns the BFS iterator for the graph
+     * @param start the start node of the search/iteration
+     * @return the BFS iterator for the graph
+     */
+    public BFSIterator getBFSIterator(Vertex<T> start) {
+        return new BFSIterator(start);
+    }
+
+    /**
+     * Returns the DFS iterator for the graph
+     * @param start the start node of the search/iteration
+     * @return the DFS iterator for the graph
+     */
+    public DFSIterator getDFSIterator(Vertex<T> start) {
+        return new DFSIterator(start);
+    }
+
+    /**
+     * Breath First Search iterator for the graph
+     */
+    private class BFSIterator implements Iterator<Vertex<T>> {
+
+        /**
+         * Queue to store the discovered nodes
+         */
+        private Queue<Vertex<T>> queue;
+
+        /**
+         * Constructor to initialise the queue with the start node
+         * @param start vertex from which the search is to start from
+         */
+        public BFSIterator(Vertex<T> start) {
+            this.queue = new LinkedList<>();
+            this.queue.add(start);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !queue.isEmpty();
+        }
+
+        /**
+         * Removes the first vertex from the queue and adds its neighbours to the end of the queue
+         * @return first vertex in the queue
+         */
+        @Override
+        public Vertex<T> next() {
+            Vertex<T> v = queue.poll();
+            v.edges.forEach(edges -> queue.add(edges.destination));
+            return v;
+        }
+
+    }
+
+    /**
+     * Depth first search iterator for the graph
+     */
+    private class DFSIterator implements Iterator<Vertex<T>> {
+
+        /**
+         * Stack to store the discovered nodes
+         */
+        private Stack<Vertex<T>> stack;
+
+        /**
+         * Constructor to initialise the stack with the start node
+         * @param start vertex from which the search is to start from
+         */
+        public DFSIterator(Vertex<T> start) {
+            this.stack = new Stack<>();
+            stack.push(start);
+
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !stack.isEmpty();
+        }
+
+        /**
+         * Pops the elements from the stack and pushes its neighbours to the stack
+         * @return first vertex in the stack
+         */
+        @Override
+        public Vertex<T> next() {
+            Vertex<T> v = stack.pop();
+            v.edges.forEach(e -> stack.push(e.destination));
+            return v;
         }
     }
 }

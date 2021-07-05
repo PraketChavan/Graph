@@ -3,9 +3,9 @@
  * edge and the destination vertex
  */
 
-public class Edges {
+public class Edges<T> {
     double weight;
-    Vertex destination;
+    Vertex<T> destination;
 
     public Edges(double weight, Vertex destination) {
         this.weight = weight;

@@ -9,12 +9,12 @@ import java.util.LinkedList;
 public class Vertex<T> {
     int id;
     T data;
-    LinkedList<Edges> edges;
+    LinkedList<Edges<T>> edges;
 
     public Vertex(int id, T data) {
         this.id = id;
         this.data = data;
-        edges = new LinkedList<Edges>();
+        edges = new LinkedList<Edges<T>>();
     }
 
     /**
@@ -23,7 +23,7 @@ public class Vertex<T> {
      * @param weight the weight of the edge
      */
     public void addEdge(Vertex<T> dest, double weight) {
-        edges.add(new Edges(weight, dest));
+        edges.add(new Edges<T>(weight, dest));
     }
 
     /**
@@ -38,7 +38,7 @@ public class Vertex<T> {
      * Removes all the edges to and from the vertex
      */
     public void removeAllEdges() {
-        for (Edges e: edges) {
+        for (Edges<T> e: edges) {
             edges.remove(e);
         }
     }
